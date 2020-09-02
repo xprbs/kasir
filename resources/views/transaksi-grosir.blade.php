@@ -76,7 +76,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                           <div class="input-group input-group-merge">
-                              <input type="submit" value="Tambah Data" class="btn btn-block btn-default">
+                            <button type="button" class="btn btn-block btn-default" id="tambahData">Tambah Data</button>
                           </div>
                         </div>
                       </div>
@@ -100,7 +100,7 @@
                  </div>
                  <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table align-items-center table-flush table-striped">
+                        <table class="table align-items-center table-flush table-striped" id="table-transaksi">
                           <thead class="thead-light">
                             <tr>
                               <th>Kode Produk</th>
@@ -111,25 +111,6 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>
-                                <span class="text-muted">76164217</span>
-                              </td>
-                              <td>
-                                <span class="text-muted">Marlboro Merah - Bks</span>
-                              </td>
-                              <td>
-                                <span class="text-muted">Marlboro Merah - Bks</span>
-                              </td>
-                              <td>
-                                <span class="text-muted">Rp. 360000</span>
-                              </td>
-                              <td class="table-actions">
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
-                                  <i class="fas fa-trash"></i>
-                                </a>
-                              </td>
-                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -148,7 +129,8 @@
                    </div>
                  </div>
                  <div class="card-body">
-                    <form>
+                    <form action="{{ route('transaksi-grosir.store') }}" method="POST">
+                      @csrf
                         <!-- Input groups with icon -->
                         <div class="row">
                           <div class="col">
@@ -179,7 +161,7 @@
                                     <div class="input-group-prepend">
                                       <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                     </div>
-                                    <input class="form-control" placeholder="Uang Diterima" id="nama_customer" name="nama_customer" type="text">
+                                    <input class="form-control" placeholder="Uang Diterima" id="uang_diterima" name="uang_diterima" type="text">
                                   </div>
                                 </div>
                             </div>
@@ -189,10 +171,12 @@
                                   <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                   </div>
-                                  <input class="form-control" disabled placeholder="  Uang Kembali" id="nama_customer" name="nama_customer" type="text">
+                                  <input class="form-control" disabled placeholder="  Uang Kembali" id="uang_kembali" name="uang_kembali" type="text">
                                 </div>
                               </div>
                           </div>
+                          </div>
+                          <div id="kumpulan-transaksi" hidden>
                           </div>
                           <div class="row">
                             <div class="col">
@@ -208,37 +192,114 @@
               </div>
             </div>
          </div>
+@section('script')
 <script>
-function test(){
-    var sel = document.getElementById("nama_produk");
-    var nama_produk= sel.options[sel.selectedIndex].value;
-    // var qty = document.getElementById("qty").value;
-    var harga = null;
-    $(document).ready(function() {
-        $.ajax({
-            url: "{{ route('harga-grosir') }}",
-            method: "POST",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            dataType: 'json',
-            data: {
-                nama_produk:nama_produk
-            },
-            success: function(result) {
-                // console.log(result[0].harga_non);
-                // console.log(res.harga_non);
-                harga = result[0].harga_grosir;
-                $("#qty").keyup(function () {
-                    var qty = $(this).val();
-                    var total = harga*qty;
-                    $('#total').val(total);
-                });
-                
-                // $('#total').val(result[0].harga_non);
-            }
-        });
-    });
-}
-         </script>
+  var kode_produk;
+  var name_produk;
+  var harga = null;
+  var jumlah_biaya = 0;
+  function test(){
+      var sel = document.getElementById("nama_produk");
+      var nama_produk= sel.options[sel.selectedIndex].value;
+      // var qty = document.getElementById("qty").value;
+      $(document).ready(function() {
+          $.ajax({
+              url: "{{ route('harga') }}",
+              method: "POST",
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              dataType: 'json',
+              data: {
+                  nama_produk:nama_produk
+              },
+              success: function(result) {
+                kode_produk = result[0].kode_produk;
+                  // console.log(result[0].harga_grosir);
+                  // console.log(res.harga_grosir);
+                  harga = result[0].harga_grosir;
+                  name_produk = result[0].nama_produk;
+                  if($('#qty').val() != ''){
+                    var qty = $('#qty').val();
+                        var total = harga*qty;
+                        $('#total').val(total);
+                  }else{
+                    $('#total').val('0');
+                  }
+                  $("#qty").keyup(function () {
+                      var qty = $(this).val();
+                      var total = harga*qty;
+                      $('#total').val(total);
+                  });
+  
+                  // $('#total').val(result[0].harga_grosir);
+              }
+          });
+      });
+  }
+
+  // ----------------- tambah data ------------------------  
+  let i = 0;
+  $('#tambahData').click(function(){
+    let qty = $('#qty').val();
+    let tr = `
+    <tr produk="${i}produk${kode_produk}">
+                <td>
+                  <span class="text-muted">${kode_produk}</span>
+                </td>
+                <td>
+                  <span class="text-muted">${name_produk}</span>
+                </td>
+                <td>
+                  <span class="text-muted">${qty}</span>
+                </td>
+                <td>
+                  <span class="text-muted jumlah" jumlah=${harga * qty}>RP. ${harga * qty}</span>
+                </td>
+                <td class="table-actions">
+                  <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </td>
+              </tr>
+    `;
+    let new_transaksi = `
+    <div produk="${i}produk${kode_produk}" hidden>
+      <input type="number" name="item[${i}][kode_produk]" value="${kode_produk}">
+      <input type="number" name="item[${i++}][qty]" value="${qty}">
+    </div>
+    `;
+      if(qty !== '' && qty > '0' && $('#nama_produk').val() !== ''){
+        $('#table-transaksi tbody').append(tr);
+        $('#kumpulan-transaksi').append(new_transaksi);
+        jumlah_biaya += (harga * qty);
+        let uang = $('#uang_diterima').val();
+        $('#uang_kembali').val(uang_diterima(uang,jumlah_biaya));
+      }
+  });
+
+
+  // -------------------------------delete transaksi---------------------
+  $(document).on('click','.table-action-delete',function(){
+    let closest_tr = $(this).closest('tr');
+    let kode_produk = closest_tr.attr('produk');
+    let delete_biaya = closest_tr.find('.jumlah').attr('jumlah');
+    let uang = $('#uang_diterima').val();
+    jumlah_biaya -= delete_biaya;
+    $('#uang_kembali').val(uang_diterima(uang,jumlah_biaya));
+    $(`[produk="${kode_produk}"]`).remove();
+  });
+
+  // --------------------------- tampilan uang kembali ---------------------
+  $('#uang_diterima').keyup(function(){
+    let uang = $(this).val();
+    $('#uang_kembali').val(uang_diterima(uang,jumlah_biaya));
+  });
+
+  function uang_diterima(uang, biaya){
+    return uang - biaya;
+  }
+
+</script>
+@endsection
 @include('layout/footer')

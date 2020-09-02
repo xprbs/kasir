@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DetailTransaksi;
+use App\Transaksi;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +35,7 @@ class TransaksiGrosirController extends Controller
     public function check(Request $request)
     {
             $nama_produk = $request->nama_produk;
-            $data = DB::select(DB::raw("SELECT harga_grosir from produk where nama_produk = '$nama_produk'"));
+            $data = DB::select(DB::raw("SELECT * from produk where nama_produk = '$nama_produk'"));
             echo json_encode($data);
     }
     /**
@@ -42,7 +46,58 @@ class TransaksiGrosirController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'nama_customer' => 'required',
+        ]);
+
+        $items = $request->item; // ambil semua item
+        $items = collect($items); // masukan ke method collect
+        $items = $items->groupBy('kode_produk'); // di groupkan yang sama
+        $item_group = []; // buat array
+        $i = 0; // untuk key array item group
+        /* memasukan data ke item group */
+        foreach($items as $item){
+            $item_group[$i]['kode_produk'] = $item->first()['kode_produk'];
+            $item_group[$i]['qty'] = $item->sum('qty');
+            $item_group[$i]['jumlah'] = $item->sum('qty') * DB::table('produk')->where('kode_produk', $item->first()['kode_produk'])->first()->harga_grosir;
+            $i++;
+        }
+
+
+        $item_group = collect($item_group); 
+        $total = $item_group->sum('jumlah');
+
+        try{
+            // ------------------- cek apakah uang sesuai dengan semua jumlah -------------------
+            if($request->uang_diterima <= $total){
+                return abort(422,'uang kurang');
+            }
+
+            // -------------- create transaksi record  -------------------
+            $transaksi = Transaksi::create([
+                'id_transaksi' => '',
+                'nama_customer' => $request->nama_customer,
+                'total' => $total,
+                'tanggal' => Carbon::now()
+            ]);
+            $transaksi->update([
+                'id_transaksi' => $transaksi->id
+            ]);
+
+            // ---------------- create  detail_transaksi record ---------------
+            foreach($item_group as $item){
+                DetailTransaksi::create([
+                    'id_transaksi' => $transaksi->id,
+                    'nama_produk' => DB::table('produk')->where('kode_produk', $item['kode_produk'])->first()->nama_produk,
+                    'qty' => $item['qty'],
+                    'satuan' => '-',
+                    'jumlah' => $item['jumlah']
+                ]);
+            }
+            return back();
+        }catch(Exception $e){ // jika terjadi kesalahan di method try maka akan di lempar ke exception
+            return abort(422,$e->getMessage());
+        }
     }
 
     /**

@@ -24,7 +24,9 @@ Route::post('simpan-produk', 'ProdukController@store')->name('simpan-produk');
 Route::get('hapus-produk/{id}', 'ProdukController@destroy')->name('hapus-produk/{id}');
 
 Route::get('transaksi', 'TransaksiController@index')->name('transaksi');
+Route::post('transaksi','TransaksiController@store')->name('transaksi.store');
 Route::post('harga', 'TransaksiController@check')->name('harga');
 
 Route::get('transaksi-grosir', 'TransaksiGrosirController@index')->name('transaksi-grosir');
+Route::post('transaksi-grosir', 'TransaksiGrosirController@store')->name('transaksi-grosir.store');
 Route::post('harga-grosir', 'TransaksiGrosirController@check')->name('harga-grosir');
