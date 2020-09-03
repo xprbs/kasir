@@ -16,6 +16,7 @@ class CreateTransaksisTable extends Migration
         Schema::create('transaksis', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('id_transaksi');
+            $table->boolean('grosir')->nullable()->default(false);
             $table->string('nama_customer');
             $table->integer('total');
             $table->string('tanggal');

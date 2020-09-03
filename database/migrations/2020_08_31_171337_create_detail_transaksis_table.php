@@ -20,6 +20,7 @@ class CreateDetailTransaksisTable extends Migration
             $table->string('qty');
             $table->string('satuan');
             $table->integer('jumlah');
+            $table->boolean('grosir')->nullable()->default(false);
             $table->timestamps();
         });
     }
