@@ -97,7 +97,7 @@ class TransaksiController extends Controller
                     'jumlah' => $item['jumlah']
                 ]);
             }
-            return back();
+            return redirect()->route('cetak/{id}',$transaksi->id);
         }catch(Exception $e){
             return abort(422,$e->getMessage());
         }
