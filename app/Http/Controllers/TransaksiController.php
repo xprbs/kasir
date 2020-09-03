@@ -46,8 +46,10 @@ class TransaksiController extends Controller
     {
         $this->validate($request,[
             'nama_customer' => 'required',
+            'no_tel' => 'required',
         ]);
-
+        
+        $grosir = FALSE;
         $items = $request->item; // ambil semua item
         $items = collect($items); // masukan ke method collect
         $items = $items->groupBy('kode_produk'); // di groupkan yang sama
@@ -67,15 +69,19 @@ class TransaksiController extends Controller
 
         try{
             // ------------------- cek apakah uang sesuai dengan semua jumlah -------------------
-            if($request->uang_diterima <= $total){
+            if($request->uang_diterima < $total){
                 return abort(422,'uang kurang');
             }
             // -------------- create transaksi record  -------------------
             $transaksi = Transaksi::create([
                 'id_transaksi' => '',
+                'grosir' => $grosir,
                 'nama_customer' => $request->nama_customer,
+                'no_telpon' => $request->no_tel,
                 'total' => $total,
-                'tanggal' => Carbon::now()
+                'tanggal' => Carbon::now(),
+                'tunai' => $request->uang_diterima,
+                'kembali' => $request->uang_kembali,
             ]);
             $transaksi->update([
                 'id_transaksi' => $transaksi->id
@@ -86,7 +92,8 @@ class TransaksiController extends Controller
                     'id_transaksi' => $transaksi->id,
                     'nama_produk' => DB::table('produk')->where('kode_produk', $item['kode_produk'])->first()->nama_produk,
                     'qty' => $item['qty'],
-                    'satuan' => '-',
+                    'satuan' => DB::table('produk')->where('kode_produk', $item['kode_produk'])->first()->harga_non,
+                    'grosir' => $grosir,
                     'jumlah' => $item['jumlah']
                 ]);
             }

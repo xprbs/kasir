@@ -18,8 +18,11 @@ class CreateTransaksisTable extends Migration
             $table->string('id_transaksi');
             $table->boolean('grosir')->nullable()->default(false);
             $table->string('nama_customer');
+            $table->integer('no_telpon');
             $table->integer('total');
             $table->string('tanggal');
+            $table->integer('tunai');
+            $table->integer('kembali');
             $table->timestamps();
         });
     }

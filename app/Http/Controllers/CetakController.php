@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-class IndexController extends Controller
+class CetakController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,31 +13,14 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $now = Carbon::now();
-        $hariini = Carbon::now()->toDateString();
-        $bulanini = Carbon::now()->month;
-
-        $total_produk = DB::table('produk')->count();
-
-        $jualhari = DB::table('transaksis')->whereDate('tanggal', $hariini)->count();
-        $jualbulan = DB::table('transaksis')->whereMonth('tanggal', $bulanini)->count();
-        $jualsemua = DB::table('transaksis')->count();
-        $jualharii = DB::table('transaksis')->get();
-
-        // dd($jualhari);
-        return view('index', [
-            'total_produk' => $total_produk,
-            'jualhari' => $jualhari,
-            'jualbulan' => $jualbulan,
-            'jualsemua' => $jualsemua,
-            'jualharii' => $jualharii
-            ]);    
+        //
     }
-    public function detail($id)
+
+    public function cetak($id)
     {
-        $dataa = DB::table('transaksis')->where('id_transaksi', $id)->get(); 
         $data = DB::table('detail_transaksis')->where('id_transaksi', $id)->get();
-        return view('detail', ['data' => $data, 'dataa' => $dataa]);
+        $dataa = DB::table('transaksis')->where('id_transaksi', $id)->get();
+        return view('cetak', ['data' => $data, 'dataa' => $dataa]);
     }
     /**
      * Show the form for creating a new resource.

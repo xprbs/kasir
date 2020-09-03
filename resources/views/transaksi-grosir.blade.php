@@ -171,7 +171,7 @@
                                   <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                   </div>
-                                  <input class="form-control" disabled placeholder="  Uang Kembali" id="uang_kembali" name="uang_kembali" type="text">
+                                  <input class="form-control" placeholder="  Uang Kembali" id="uang_kembali" name="uang_kembali" type="text">
                                 </div>
                               </div>
                           </div>

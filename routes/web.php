@@ -30,3 +30,6 @@ Route::post('harga', 'TransaksiController@check')->name('harga');
 Route::get('transaksi-grosir', 'TransaksiGrosirController@index')->name('transaksi-grosir');
 Route::post('transaksi-grosir', 'TransaksiGrosirController@store')->name('transaksi-grosir.store');
 Route::post('harga-grosir', 'TransaksiGrosirController@check')->name('harga-grosir');
+
+Route::get('cetak/{id}', 'CetakController@cetak')->name('cetak/{id}');
+Route::get('detail/{id}', 'IndexController@detail')->name('detail/{id}');

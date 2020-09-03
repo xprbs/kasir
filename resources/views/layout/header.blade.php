@@ -92,7 +92,7 @@
                  </ul>
                </div>
              </li> --}}
-             <li class="nav-item">
+             {{-- <li class="nav-item">
                <a class="nav-link" href="#navbar-forms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-forms">
                  <i class="ni ni-single-copy-04 text-pink"></i>
                  <span class="nav-link-text">Laporan</span>
@@ -110,13 +110,13 @@
                    </li>
                  </ul>
                </div>
-             </li>
-             <li class="nav-item">
+             </li> --}}
+             {{-- <li class="nav-item">
                 <a class="nav-link" href="../../pages/widgets.html">
                   <i class="ni ni-user-run text-blue"></i>
                   <span class="nav-link-text">Keluar</span>
                 </a>
-              </li>
+              </li> --}}
            </ul>
            <!-- Divider -->
          </div>

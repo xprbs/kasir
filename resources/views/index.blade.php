@@ -31,7 +31,7 @@
                    <div class="row">
                      <div class="col">
                        <h5 class="card-title text-uppercase text-muted mb-0">Sale Hari Ini</h5>
-                       <span class="h2 font-weight-bold mb-0">2,356</span>
+                       <span class="h2 font-weight-bold mb-0">{{$jualhari}}</span>
                      </div>
                      <div class="col-auto">
                        <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
@@ -48,8 +48,8 @@
                  <div class="card-body">
                    <div class="row">
                      <div class="col">
-                       <h5 class="card-title text-uppercase text-muted mb-0">Sale Minggu Ini</h5>
-                       <span class="h2 font-weight-bold mb-0">924</span>
+                       <h5 class="card-title text-uppercase text-muted mb-0">Sale Bulan Ini</h5>
+                       <span class="h2 font-weight-bold mb-0">{{$jualbulan}}</span>
                      </div>
                      <div class="col-auto">
                        <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
@@ -66,8 +66,8 @@
                  <div class="card-body">
                    <div class="row">
                      <div class="col">
-                       <h5 class="card-title text-uppercase text-muted mb-0">Sale Bulan Ini</h5>
-                       <span class="h2 font-weight-bold mb-0">49,65%</span>
+                       <h5 class="card-title text-uppercase text-muted mb-0">Total Penjualan</h5>
+                       <span class="h2 font-weight-bold mb-0">{{$jualsemua}}</span>
                      </div>
                      <div class="col-auto">
                        <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
@@ -90,26 +90,32 @@
             <div class="card-header">
                 <h3 class="mb-0">Penjualan Hari Ini</h3>
               </div>
-                 
              <div class="table-responsive py-2">
                 <table class="table table-flush" id="datatable-basic">
                   <thead class="thead-light">
                     <tr>
                       <th>Nomor Invoice</th>
-                      <th>Nama Produk</th>
                       <th>Nama Customer</th>
                       <th>Tipe Penjualan</th>
+                      <th>Tanggal Transaksi</th>
                       <th>Total Belanja</th>
+                      <th>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
+                    @foreach ($jualharii as $item)
                     <tr>
-                      <td>Tiger Nixon</td>
-                      <td>System Architect</td>
-                      <td>Edinburgh</td>
-                      <td>61</td>
-                      <td>$320,800</td>
+                      <td>{{$item->id_transaksi}}</td>
+                      <td>{{$item->nama_customer}}</td>
+                      <td>{{ $item->grosir == 1 ? 'Grosir'  : 'Non Grosir' }}</td>
+                      <td>{{$item->tanggal}}</td>
+                      <td>Rp.{{$item->total}}</td>
+                      <td>
+                        <a href="detail/{{$item->id}}" class="btn btn-info btn-sm">Lihat Detail</a>
+                        <a href="cetak/{{$item->id}}" class="btn btn-primary btn-sm">Cetak Struk</a>
+                      </td>
                     </tr>
+                    @endforeach
                   </tbody>
                 </table>
               </div>

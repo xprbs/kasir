@@ -171,7 +171,7 @@
                                   <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                   </div>
-                                  <input class="form-control" disabled placeholder="  Uang Kembali" id="uang_kembali" name="uang_kembali" type="text">
+                                  <input class="form-control" placeholder="  Uang Kembali" id="uang_kembali" name="uang_kembali" type="text">
                                 </div>
                               </div>
                           </div>
@@ -255,7 +255,7 @@
                   <span class="text-muted">${qty}</span>
                 </td>
                 <td>
-                  <span class="text-muted jumlah" jumlah=${harga * qty}>RP. ${harga * qty}</span>
+                  <span class="text-muted jumlah" jumlah=${harga * qty}> ${harga * qty}</span>
                 </td>
                 <td class="table-actions">
                   <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
