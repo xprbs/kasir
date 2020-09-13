@@ -37,7 +37,7 @@
             font-weight: bold;
         }
 </style>
-    <body>
+    <body onload="window.print()">
 	<table width=200px>
         <tr>
             <td  colspan="3" align="center"><b>Toko Surya</b></td>

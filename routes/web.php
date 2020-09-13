@@ -22,6 +22,8 @@ Route::get('hapus-satuan/{id}', 'SatuanController@destroy')->name('hapus-satuan/
 Route::get('produk', 'ProdukController@index')->name('produk');
 Route::post('simpan-produk', 'ProdukController@store')->name('simpan-produk');
 Route::get('hapus-produk/{id}', 'ProdukController@destroy')->name('hapus-produk/{id}');
+Route::get('edit-produk/{id}', 'ProdukController@edit')->name('edit-produk/{id}');
+Route::post('update-produk', 'ProdukController@update')->name('update-produk');
 
 Route::get('transaksi', 'TransaksiController@index')->name('transaksi');
 Route::post('transaksi','TransaksiController@store')->name('transaksi.store');
@@ -33,3 +35,4 @@ Route::post('harga-grosir', 'TransaksiGrosirController@check')->name('harga-gros
 
 Route::get('cetak/{id}', 'CetakController@cetak')->name('cetak/{id}');
 Route::get('detail/{id}', 'IndexController@detail')->name('detail/{id}');
+

@@ -99,7 +99,7 @@ class TransaksiGrosirController extends Controller
                     'jumlah' => $item['jumlah']
                 ]);
             }
-            return redirect()->route('cetak/{id}',$transaksi->id);
+            return redirect()->away(route('cetak/{id}',$transaksi->id));
         }catch(Exception $e){ // jika terjadi kesalahan di method try maka akan di lempar ke exception
             return abort(422,$e->getMessage());
         }

@@ -64,7 +64,8 @@ class ProdukController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = DB::table('produk')->where('id', $id)->get();
+        return view('edit-produk', ['data' => $data]);
     }
 
     /**
@@ -74,10 +75,16 @@ class ProdukController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
-    }
+        DB::table('produk')->where('id',$request->id)->update([
+            'kode_produk' => $request->kode_produk,
+            'nama_produk' => $request->nama_produk,
+            'harga_grosir' => $request->harga_grosir,
+            'harga_non' => $request->harga_non
+        ]);
+        return redirect()->back()->with('status', 'Data Berhasil Disimpan');
+    }   
 
     /**
      * Remove the specified resource from storage.

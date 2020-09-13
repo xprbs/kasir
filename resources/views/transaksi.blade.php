@@ -161,7 +161,7 @@
                                     <div class="input-group-prepend">
                                       <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                     </div>
-                                    <input class="form-control" placeholder="Uang Diterima" id="uang_diterima" name="uang_diterima" type="text">
+                                    <input class="form-control" placeholder="Uang Diterima" id="uang_diterima" name="uang_diterima" type="number">
                                   </div>
                                 </div>
                             </div>

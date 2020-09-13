@@ -81,12 +81,12 @@
                                 </form>
                             </div>
                         </div> 
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
              <div class="table-responsive py-2">
                 <table class="table table-flush" id="datatable-basic">
                   <thead class="thead-light">
@@ -109,7 +109,7 @@
                       <td>{{$item->harga_grosir}}</td>
                       <td>{{$item->harga_non}}</td>
                       <td>
-                          <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                          <a href="edit-produk/{{$item->id}}" class="btn btn-primary btn-sm">Edit</a>
                           <a href="hapus-produk/{{$item->id}}" class="btn btn-danger btn-sm">Hapus</a>
                         </td>
                     </tr>

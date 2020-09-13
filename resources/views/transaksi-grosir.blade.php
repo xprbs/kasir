@@ -50,7 +50,7 @@
                             <select onchange="test()"  id="nama_produk" class="form-control" name="nama_produk" required data-toggle="select" placeholder="Pilih Produk">
                                 <option value="">Pilih Produk</option>
                               @foreach ($produk as $item)
-                            <option value="{{$item->nama_produk}}">{{$item->nama_produk}}</option>
+                            <option value="{{$item->nama_produk}}">{{$item->kode_produk}} - {{$item->nama_produk}}</option>
                               @endforeach
                             </select>
                         </div>
