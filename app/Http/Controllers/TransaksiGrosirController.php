@@ -52,14 +52,14 @@ class TransaksiGrosirController extends Controller
         $grosir = TRUE;
         $items = $request->item; // ambil semua item
         $items = collect($items); // masukan ke method collect
-        $items = $items->groupBy('kode_produk'); // di groupkan yang sama
+        $items = $items->groupBy('id'); // di groupkan yang sama
         $item_group = []; // buat array
         $i = 0; // untuk key array item group
         /* memasukan data ke item group */
         foreach($items as $item){
-            $item_group[$i]['kode_produk'] = $item->first()['kode_produk'];
+            $item_group[$i]['id'] = $item->first()['id'];
             $item_group[$i]['qty'] = $item->sum('qty');
-            $item_group[$i]['jumlah'] = $item->sum('qty') * DB::table('produk')->where('kode_produk', $item->first()['kode_produk'])->first()->harga_grosir;
+            $item_group[$i]['jumlah'] = $item->sum('qty') * DB::table('produk')->where('id', $item->first()['id'])->first()->harga_grosir;
             $i++;
         }
 
@@ -92,9 +92,9 @@ class TransaksiGrosirController extends Controller
             foreach($item_group as $item){
                 DetailTransaksi::create([
                     'id_transaksi' => $transaksi->id,
-                    'nama_produk' => DB::table('produk')->where('kode_produk', $item['kode_produk'])->first()->nama_produk,
+                    'nama_produk' => DB::table('produk')->where('id', $item['id'])->first()->nama_produk,
                     'qty' => $item['qty'],
-                    'satuan' => DB::table('produk')->where('kode_produk', $item['kode_produk'])->first()->harga_grosir,
+                    'satuan' => DB::table('produk')->where('id', $item['id'])->first()->harga_grosir,
                     'grosir' => $grosir,
                     'jumlah' => $item['jumlah']
                 ]);

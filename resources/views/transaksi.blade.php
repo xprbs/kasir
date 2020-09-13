@@ -196,6 +196,7 @@
 @section('script')
 <script>
   var kode_produk;
+  var id_produk;
   var name_produk;
   var harga = null;
   var jumlah_biaya = 0;
@@ -216,6 +217,7 @@
               },
               success: function(result) {
                 kode_produk = result[0].kode_produk;
+                id_produk = result[0].id;
                   // console.log(result[0].harga_non);
                   // console.log(res.harga_non);
                   harga = result[0].harga_non;
@@ -266,7 +268,7 @@
     `;
     let new_transaksi = `
     <div produk="${i}produk${kode_produk}" hidden>
-      <input type="number" name="item[${i}][kode_produk]" value="${kode_produk}">
+      <input type="number" name="item[${i}][id]" value="${id_produk}">
       <input type="number" name="item[${i++}][qty]" value="${qty}">
     </div>
     `;
