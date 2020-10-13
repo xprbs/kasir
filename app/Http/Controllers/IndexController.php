@@ -103,6 +103,7 @@ class IndexController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::table('transaksis')->where('id', $id)->delete();
+        return redirect()->back();
     }
 }
