@@ -49,23 +49,25 @@ class TransaksiGrosirController extends Controller
         $this->validate($request,[
             'nama_customer' => 'required',
         ]);
+
         $grosir = TRUE;
-        $items = $request->item; // ambil semua item
-        $items = collect($items); // masukan ke method collect
-        $items = $items->groupBy('id'); // di groupkan yang sama
-        $item_group = []; // buat array
-        $i = 0; // untuk key array item group
-        /* memasukan data ke item group */
-        foreach($items as $item){
-            $item_group[$i]['id'] = $item->first()['id'];
-            $item_group[$i]['qty'] = $item->sum('qty');
-            $item_group[$i]['jumlah'] = $item->sum('qty') * DB::table('produk')->where('id', $item->first()['id'])->first()->harga_grosir;
-            $i++;
+        // ----------------- yang ada di list produk -------------------
+        if(!empty($request->item['produk'])){
+            $items = $request->item['produk']; // ambil semua item produk
+            $item_group = $this->produk($items);
+            $total = $item_group[1];
         }
 
+        // ------------------- new produk -------------
+        if(!empty($request->item['new_produk'])){
+            $item_news = $request->item['new_produk']; // ambil semua item produk
+            $item_new_groups = $this->new_produk($item_news);
+            $total = $item_new_groups[1] + (isset($total) ? $total : 0);
+        }
 
-        $item_group = collect($item_group); 
-        $total = $item_group->sum('jumlah');
+        if(empty($request->item['new_produk']) && empty($request->item['produk'])){
+            return abort(422,'silahkan belanja terlebih dahulu');
+        }
 
         try{
             // ------------------- cek apakah uang sesuai dengan semua jumlah -------------------
@@ -89,15 +91,30 @@ class TransaksiGrosirController extends Controller
             ]);
 
             // ---------------- create  detail_transaksi record ---------------
-            foreach($item_group as $item){
-                DetailTransaksi::create([
-                    'id_transaksi' => $transaksi->id,
-                    'nama_produk' => DB::table('produk')->where('id', $item['id'])->first()->nama_produk,
-                    'qty' => $item['qty'],
-                    'satuan' => DB::table('produk')->where('id', $item['id'])->first()->harga_grosir,
-                    'grosir' => $grosir,
-                    'jumlah' => $item['jumlah']
-                ]);
+            if(!empty($request->item['produk'])){
+                foreach($item_group[0] as $item){
+                    DetailTransaksi::create([
+                        'id_transaksi' => $transaksi->id,
+                        'nama_produk' => DB::table('produk')->where('id', $item['id'])->first()->nama_produk,
+                        'qty' => $item['qty'],
+                        'satuan' => DB::table('produk')->where('id', $item['id'])->first()->harga_grosir,
+                        'grosir' => $grosir,
+                        'jumlah' => $item['jumlah']
+                    ]);
+                }
+            }
+
+            if(!empty($request->item['new_produk'])){
+                foreach($item_new_groups[0] as $item_new_group){
+                    DetailTransaksi::create([
+                        'id_transaksi' => $transaksi->id,
+                        'nama_produk' => $item_new_group['nama_produk'],
+                        'qty' => $item_new_group['qty'],
+                        'satuan' => $item_new_group['satuan'],
+                        'grosir' => $grosir,
+                        'jumlah' => $item_new_group['jumlah']
+                    ]);
+                }
             }
             return redirect()->away(route('cetak/{id}',$transaksi->id));
         }catch(Exception $e){ // jika terjadi kesalahan di method try maka akan di lempar ke exception
@@ -148,5 +165,46 @@ class TransaksiGrosirController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function produk($items)
+    {
+        $items = collect($items); // masukan ke method collect
+        $items = $items->groupBy('id'); // di groupkan yang sama
+        $item_group = []; // buat array
+        $i = 0; // untuk key array item group
+        /* memasukan data ke item group */
+        foreach($items as $item){
+            $item_group[$i]['id'] = $item->first()['id'];
+            $item_group[$i]['qty'] = $item->sum('qty');
+            $item_group[$i]['jumlah'] = $item->sum('qty') * DB::table('produk')->where('id', $item->first()['id'])->first()->harga_grosir;
+            $i++;
+        }
+
+
+        $item_group = collect($item_group); 
+        $total = $item_group->sum('jumlah');
+        return [$item_group,$total];
+    }
+
+    public function new_produk($item_news)
+    {
+        $item_news = collect($item_news); // masukan ke method collect
+        $item_news = $item_news->groupBy('nama_produk'); // di groupkan yang sama
+        $item_new_groups = []; // buat array
+        $x = 0; // untuk key array item group
+
+
+        foreach($item_news as $item_new){
+            $item_new_groups[$x]['nama_produk'] = $item_new->first()['nama_produk'];
+            $item_new_groups[$x]['qty'] = $item_new->sum('qty');
+            $item_new_groups[$x]['satuan'] = $item_new->sum('satuan');
+            $item_new_groups[$x]['jumlah'] = $item_new->sum('qty') * $item_new->sum('satuan');
+            $x++;
+        }
+
+        $item_new_groups = collect($item_new_groups);
+        $total = $item_new_groups->sum('jumlah');
+        return [$item_new_groups,$total];
     }
 }

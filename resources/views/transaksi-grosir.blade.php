@@ -83,6 +83,65 @@
                         </div>
                 </div>
                 </form>
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <!-- Title -->
+                            <h5 class="h3 mb-0">Produk Tidak Ada Dilist</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Input groups with icon -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group input-group-merge">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-number"></i></span>
+                                    </div>
+                                    <input class="form-control" placeholder="Nama Produk" id="name_produk" name="name_produk" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <div class="input-group input-group-merge">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-number"></i></span>
+                                    </div>
+                                    <input class="form-control" placeholder="Qty" id="qty_produk" name="qty_produk" type="number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <div class="input-group input-group-merge">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-number"></i></span>
+                                    </div>
+                                    <input class="form-control" placeholder="Satuan" id="satuan_produk" name="satuan_produk" type="number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <div class="input-group input-group-merge">
+                                    <input disabled class="form-control" placeholder="Total " id="total_produk"
+                                        type="number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group input-group-merge">
+                                    <button type="button" class="btn btn-block btn-default" id="newData">New Data
+                                        Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -279,8 +338,8 @@
                 let new_transaksi =
                     `
                                                                                                                                <div produk="${i}produk${kode_produk}" hidden>
-                                                                                                                                 <input type="number" name="item[${i}][id]" value="${id_produk}">
-                                                                                                                                 <input type="number" name="item[${i++}][qty]" value="${qty}">
+                                                                                                                                 <input type="number" name="item[produk][${i}][id]" value="${id_produk}">
+                                                                                                                                 <input type="number" name="item[produk][${i++}][qty]" value="${qty}">
                                                                                                                                </div>
                                                                                                                                `;
                 if (qty !== '' && qty > '0' && $('#nama_produk').val() !== '') {
@@ -314,6 +373,61 @@
                 return uang - biaya;
             }
 
+
+            $(document).on('keyup','#qty_produk',function(){
+                let qty_produk = $(this).val()
+                let satuan_produk = $('#satuan_produk').val()
+                $('#total_produk').val(qty_produk * satuan_produk)
+            })
+
+            $(document).on('keyup','#satuan_produk',function(){
+                let qty_produk = $('#qty_produk').val()
+                let satuan_produk = $(this).val()
+                $('#total_produk').val(qty_produk * satuan_produk)
+            })
+
+            $(document).on('click','#newData',function(){
+                let name_produk = $('#name_produk').val();
+                let qty = $('#qty_produk').val();
+                let satuan_produk = $('#satuan_produk').val();
+                let tr =
+                    `
+                    <tr produk="${i}produk${name_produk}">
+                                <td>
+                                    <span class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">${name_produk}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">${qty}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted jumlah" jumlah=${satuan_produk * qty}>RP. ${satuan_produk * qty}</span>
+                                </td>
+                                <td class="table-actions">
+                                    <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
+                                    <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                                </tr>
+                    `;
+                let new_transaksi =
+                    `
+                    <div produk="${i}produk${name_produk}" hidden>
+                        <input type="text" name="item[new_produk][${i}][nama_produk]" value="${name_produk}">
+                        <input type="number" name="item[new_produk][${i}][qty]" value="${qty}">
+                        <input type="number" name="item[new_produk][${i++}][satuan]" value="${satuan_produk}">
+                    </div>
+                    `;
+                if (qty !== '' && qty > '0' && satuan_produk !== '' && satuan_produk > '0' && $('#name_produk').val() !== '') {
+                    $('#table-transaksi tbody').append(tr);
+                    $('#kumpulan-transaksi').append(new_transaksi);
+                    jumlah_biaya += (satuan_produk * qty);
+                    let uang = $('#uang_diterima').val();
+                    $('#uang_kembali').val(uang_diterima(uang, jumlah_biaya));
+                }
+            })
         </script>
     @endsection
     @include('layout/footer')
