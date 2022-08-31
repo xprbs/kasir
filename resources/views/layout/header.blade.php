@@ -60,10 +60,18 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link {{ Request::is('transaksi') ? 'active' : '' }}"
+                                href="{{ route('transaksi') }}">
+                                <i class="ni ni-ungroup text-green"></i>
+                                <span class="nav-link-text">Transaksi</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link {{ Request::is('transaksi-grosir') ? 'active' : '' }}"
                                 href="{{ route('transaksi-grosir') }}">
                                 <i class="ni ni-ungroup text-green"></i>
-                                <span class="nav-link-text">Transaksi</span>
+                                <span class="nav-link-text">Transaksi Grosir</span>
                             </a>
                         </li>
 

@@ -71,7 +71,7 @@ class CookieJar implements JarContract
     }
 
     /**
-     * Create a cookie that lasts "forever" (five years).
+     * Create a cookie that lasts "forever" (400 days).
      *
      * @param  string  $name
      * @param  string  $value
@@ -85,7 +85,7 @@ class CookieJar implements JarContract
      */
     public function forever($name, $value, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null)
     {
-        return $this->make($name, $value, 2628000, $path, $domain, $secure, $httpOnly, $raw, $sameSite);
+        return $this->make($name, $value, 576000, $path, $domain, $secure, $httpOnly, $raw, $sameSite);
     }
 
     /**
@@ -143,7 +143,7 @@ class CookieJar implements JarContract
         if (isset($parameters[0]) && $parameters[0] instanceof Cookie) {
             $cookie = $parameters[0];
         } else {
-            $cookie = $this->make(...$parameters);
+            $cookie = $this->make(...array_values($parameters));
         }
 
         if (! isset($this->queued[$cookie->getName()])) {
@@ -151,6 +151,19 @@ class CookieJar implements JarContract
         }
 
         $this->queued[$cookie->getName()][$cookie->getPath()] = $cookie;
+    }
+
+    /**
+     * Queue a cookie to expire with the next response.
+     *
+     * @param  string  $name
+     * @param  string|null  $path
+     * @param  string|null  $domain
+     * @return void
+     */
+    public function expire($name, $path = null, $domain = null)
+    {
+        $this->queue($this->forget($name, $path, $domain));
     }
 
     /**
@@ -213,5 +226,17 @@ class CookieJar implements JarContract
     public function getQueuedCookies()
     {
         return Arr::flatten($this->queued);
+    }
+
+    /**
+     * Flush the cookies which have been queued for the next request.
+     *
+     * @return $this
+     */
+    public function flushQueuedCookies()
+    {
+        $this->queued = [];
+
+        return $this;
     }
 }
